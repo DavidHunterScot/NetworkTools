@@ -50,6 +50,8 @@ class NetworkTools
     		    for( $a = 0; $a < count( $response->answer ); $a++ )
     		    {
     		        $response->answer[ $a ] = ( array ) $response->answer[ $a ];
+					if( isset( $response->answer[ $a ]['rdata'] ) ) unset( $response->answer[ $a ]['rdata'] );
+					if( isset( $response->answer[ $a ]['rdlength'] ) ) unset( $response->answer[ $a ]['rdlength'] );
     		    }
     		    
     			$return['type'] = 'success';
