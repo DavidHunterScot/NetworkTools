@@ -1,16 +1,11 @@
 <?php
 
-include __DIR__ . DIRECTORY_SEPARATOR . 'NetworkTools.php';
+include_once __DIR__ . DIRECTORY_SEPARATOR . 'NetworkTools.php';
 
-$tool = isset( $_GET['tool'] ) ? $_GET['tool'] : '';
-$networkTools = new NetworkTools;
+$endpoint = ( isset( $_REQUEST['tool'] ) ? $_REQUEST['tool'] : '' ) . '/' . ( isset( $_REQUEST['hostname'] ) ? $_REQUEST['hostname'] : '' ) . '/' . ( isset( $_REQUEST['type'] ) ? $_REQUEST['type'] : 'A' ) . '/' . ( isset( $_REQUEST['nameservers'] ) ? $_REQUEST['nameservers'] : join( ' ', NetworkTools::DEFAULT_NAMESERVERS ) );
 
-$api = isset( $_GET['api'] );
+include_once __DIR__ . DIRECTORY_SEPARATOR . 'api.php';
 
-if( $api )
-    header( 'Content-Type: application/json' );
-else
-{
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -45,33 +40,15 @@ else
         
         <main>
             <div class="w3-auto w3-padding">
-<?php
-}
 
-switch( $tool )
+<?php
+
+if( $tool == "" )
 {
-    case '':
-        
-        $output[ 'type' ] = 'info';
-        $output[ 'message' ] = 'Welcome to Network Tools!';
-        
-        if( $api )
-            echo json_encode( $output );
-        else
-            echo '<p>' . $output['message'] . '</p>';
-        
-        break;
-    case 'dns':
-        $hostname = isset( $_GET['hostname'] ) ? $_GET['hostname'] : '';
-        $type = isset( $_GET['type'] ) ? $_GET['type'] : 'A';
-        $nameservers = isset( $_GET['nameservers'] ) ? explode( ' ', $_GET['nameservers'] ) : NetworkTools::DEFAULT_NAMESERVERS;
-        
-        $response = $networkTools->dns( $hostname, $type, $nameservers );
-        
-        if( $api )
-            echo json_encode( $response );
-        else
-        {
+    echo '<p>' . $api_result['message'] . '</p>';
+}
+elseif( $tool == "dns" )
+{
 ?>
 
                 <h2><b>DNS</b> Tool</h2>
@@ -103,9 +80,9 @@ switch( $tool )
                 </form>
 
 <?php
-            if( $response['type'] == "success" )
+            if( $api_result['type'] == "success" )
             {
-                if( count( $response['answer'] ) > 0 )
+                if( count( ( array ) $api_result['answer'] ) > 0 )
                 {
 ?>
 
@@ -152,7 +129,7 @@ switch( $tool )
 
                         </tr>
 
-                        <?php foreach( $response['answer'] as $answer ): ?>
+                        <?php foreach( ( array ) $api_result['answer'] as $answer ): ?>
 
                         <tr class="w3-monospace">
                             <td><?php echo $answer['name']; ?></td>
@@ -211,34 +188,23 @@ switch( $tool )
                 ?>
 
                 <div class="w3-panel w3-stretch">
-                    <p>Answer from nameserver <code class="w3-light-gray w3-padding-small w3-round-large"><?php echo $response['answer_from']; ?></code>.</p>
+                    <p>Answer from nameserver <code class="w3-light-gray w3-padding-small w3-round-large"><?php echo $api_result['answer_from']; ?></code>.</p>
                 </div>
 
             <?php
             }
             else
             {
-                echo '<p>' . $response['message'] . '</p>';
+                echo '<p>' . $api_result['message'] . '</p>';
             }
-        }
         
-        break;
-    default:
+}
+else
+{
         http_response_code( 404 );
         
-        $output[ 'type' ] = 'error';
-        $output[ 'message' ] = 'Tool Not Found: ' . $tool;
-        
-        if( $api )
-            echo json_encode( $output );
-        else
-            echo '<p>' . $output['message'] . '</p>';
-        
-        break;
+        echo '<p>' . $api_result['message'] . '</p>';
 }
-
-if( ! $api )
-{
 ?>
 
             </div>
@@ -251,5 +217,3 @@ if( ! $api )
         </footer>
     </body>
 </html>
-<?php
-}
