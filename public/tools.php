@@ -246,7 +246,7 @@ if( ! $api )
         
         <footer class="w3-topbar w3-border-gray w3-light-gray">
             <div class="w3-auto w3-padding w3-small">
-                <p>Copyright &copy; <a href="https://davidhunter.scot" target="_blank">David Hunter</a>.</p>
+                <p>Copyright &copy; <a href="https://davidhunter.scot" target="_blank">David Hunter</a>. Source Code on <a href="https://github.com/DavidHunterScot/NetworkTools" target="_blank">GitHub</a>.</p>
             </div>
         </footer>
     </body>
