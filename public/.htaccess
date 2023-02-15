@@ -1,0 +1,16 @@
+DirectoryIndex tools.php
+
+<IfModule mod_rewrite.c>
+    RewriteEngine on
+    
+    RewriteCond %{SERVER_PORT} ^80$
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [END]
+    
+    RewriteRule ^api/([a-zA-Z0-9]+)$ tools.php?api&tool=$1 [QSA,END]
+    RewriteRule ^([a-zA-Z0-9]+)$ tools.php?tool=$1 [QSA,END]
+    
+    RewriteCond %{REQUEST_FILENAME} !-l
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)$ tools.php [QSA,END]
+</IfModule>
