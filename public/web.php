@@ -135,7 +135,7 @@ elseif( $tool == "dns" )
                             <td><?php echo $answer['name']; ?></td>
                             <td><?php echo $answer['type']; ?></td>
                             <td><?php echo $answer['class']; ?></td>
-                            <td><?php echo $answer['ttl']; ?></td>
+                            <td><?php echo $networkTools->friendlyTTL( $answer['ttl'] ); ?></td>
 
                             <?php if( $answer['type'] == "A" || $answer['type'] == "AAAA" ): ?>
 

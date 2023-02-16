@@ -76,4 +76,15 @@ class NetworkTools
     {
         return $this->validTypes;
     }
+
+	public function friendlyTTL( int $ttl )
+	{
+		if( $ttl >= 60 * 60 * 24 )
+			return $ttl . ' (' . round( $ttl / 60 / 60 / 24 ) . " day" . ( round( $ttl / 60 / 60 / 24 ) > 1 ? 's' : '' ) . ')';
+		if( $ttl >= 60 * 60 )
+			return $ttl . ' (' . round( $ttl / 60 / 60 ) . " hour" . ( round( $ttl / 60 / 60 ) > 1 ? 's' : '' ) . ')';
+		if( $ttl >= 60 )
+			return $ttl . ' (' . round( $ttl / 60 ) . " minute" . ( round( $ttl / 60 ) > 1 ? 's' : '' ) . ')';
+		return $ttl . " second" . ( $ttl > 1 ? 's' : '' );
+	}
 }
