@@ -63,7 +63,7 @@ elseif( $tool == "dns" )
                     <p>
                         <label for="type">Type</label>
                         <input type="text" id="type" name="type" class="w3-input"<?php if( $type ) echo ' value="' . $type . '"'; ?>>
-                        <span class="w3-text-gray w3-small">Supported Record Types (case sensitive): <?php echo join( ', ', $networkTools->getValidTypes() ); ?></span>
+                        <span class="w3-text-gray w3-small">Supported Record Types (case sensitive): <?php echo join( ', ', $networkTools->getValidTypes() ); ?> (or ALL for all types)</span>
                     </p>
                     
                     <p>
@@ -82,14 +82,21 @@ elseif( $tool == "dns" )
 <?php
             if( $api_result['type'] == "success" )
             {
-                if( count( ( array ) $api_result['answer'] ) > 0 )
+                foreach( (array) $api_result['answers'] as $type => $answer )
                 {
+                ?>
+
+                <p class="w3-large w3-border-bottom w3-stretch w3-padding"><b><?php echo $type; ?></b></p>
+
+                <?php
+                    if( count( ( array ) $answer['answer'] ) > 0 )
+                    {
 ?>
 
                 <div class="w3-stretch" style="overflow-x: auto; white-space: nowrap;">
                     <table class="w3-table w3-striped">
                         <tr>
-                            <th>Name</th>
+                            <th>Hostname</th>
                             <th>Type</th>
                             <th>Class</th>
                             <th>TTL</th>
@@ -129,48 +136,48 @@ elseif( $tool == "dns" )
 
                         </tr>
 
-                        <?php foreach( ( array ) $api_result['answer'] as $answer ): ?>
+                        <?php foreach( ( array ) $answer['answer'] as $record ): ?>
 
                         <tr class="w3-monospace">
-                            <td><?php echo $answer['name']; ?></td>
-                            <td><?php echo $answer['type']; ?></td>
-                            <td><?php echo $answer['class']; ?></td>
-                            <td><?php echo $networkTools->friendlyTTL( $answer['ttl'] ); ?></td>
+                            <td><?php echo $record['name']; ?></td>
+                            <td><?php echo $record['type']; ?></td>
+                            <td><?php echo $record['class']; ?></td>
+                            <td><?php echo $networkTools->friendlyTTL( $record['ttl'] ); ?></td>
 
-                            <?php if( $answer['type'] == "A" || $answer['type'] == "AAAA" ): ?>
+                            <?php if( $record['type'] == "A" || $record['type'] == "AAAA" ): ?>
 
-                            <td><?php echo $answer['address']; ?></td>
+                            <td><?php echo $record['address']; ?></td>
 
-                            <?php elseif( $answer['type'] == "CNAME" ): ?>
+                            <?php elseif( $record['type'] == "CNAME" ): ?>
 
-                            <td><?php echo $answer['cname']; ?></td>
+                            <td><?php echo $record['cname']; ?></td>
 
-                            <?php elseif( $answer['type'] == "NS" ): ?>
+                            <?php elseif( $record['type'] == "NS" ): ?>
 
-                            <td><?php echo $answer['nsdname']; ?></td>
+                            <td><?php echo $record['nsdname']; ?></td>
 
-                            <?php elseif( $answer['type'] == "MX" ): ?>
+                            <?php elseif( $record['type'] == "MX" ): ?>
 
-                            <td><?php echo $answer['preference']; ?></td>
-                            <td><?php echo $answer['exchange']; ?></td>
+                            <td><?php echo $record['preference']; ?></td>
+                            <td><?php echo $record['exchange']; ?></td>
 
-                            <?php elseif( $answer['type'] == "SOA" ): ?>
+                            <?php elseif( $record['type'] == "SOA" ): ?>
 
-                            <td><?php echo $answer['mname']; ?></td>
-                            <td><?php echo $answer['rname']; ?></td>
-                            <td><?php echo $answer['serial']; ?></td>
-                            <td><?php echo $answer['refresh']; ?></td>
-                            <td><?php echo $answer['retry']; ?></td>
-                            <td><?php echo $answer['expire']; ?></td>
-                            <td><?php echo $answer['minimum']; ?></td>
+                            <td><?php echo $record['mname']; ?></td>
+                            <td><?php echo $record['rname']; ?></td>
+                            <td><?php echo $record['serial']; ?></td>
+                            <td><?php echo $record['refresh']; ?></td>
+                            <td><?php echo $record['retry']; ?></td>
+                            <td><?php echo $record['expire']; ?></td>
+                            <td><?php echo $record['minimum']; ?></td>
                             
-                            <?php elseif( $answer['type'] == "TXT" ): ?>
+                            <?php elseif( $record['type'] == "TXT" ): ?>
 
-                            <td><?php echo $answer['text'][0]; ?></td>
+                            <td><?php echo $record['text'][0]; ?></td>
 
                             <?php else: ?>
 
-                            <td><?php echo print_r( $answer, true ); ?></td>
+                            <td><?php echo print_r( $record, true ); ?></td>
 
                             <?php endif; ?>
 
@@ -181,23 +188,27 @@ elseif( $tool == "dns" )
                     </table>
                 </div>
 
-                <?php
-                }
-                else
-                    echo '<div class="w3-panel w3-stretch"><p>No <b>' . $type . '</b> records are set for <b>' . $hostname . '</b>.</p></div>';
-                ?>
-
                 <div class="w3-panel w3-stretch">
-                    <p>Answer from nameserver <code class="w3-light-gray w3-padding-small w3-round-large"><?php echo $api_result['answer_from']; ?></code>.</p>
+                    <p>Answer from nameserver <code class="w3-light-gray w3-padding-small w3-round-large"><?php echo $answer['answer_from']; ?></code>.</p>
                 </div>
 
-            <?php
+                <?php
+                    }
+                    else
+                    {
+                    ?>
+
+                <div class="w3-panel w3-stretch">
+                    <p>Nameserver <code class="w3-light-gray w3-padding-small w3-round-large"><?php echo $answer['answer_from']; ?></code> has no <code class="w3-light-gray w3-padding-small w3-round-large"><?php echo $type; ?></code> records for hostname <code class="w3-light-gray w3-padding-small w3-round-large"><?php echo $hostname; ?></code>.</p>
+                </div>
+
+                <?php
+                    }
+                }
             }
-            else
-            {
-                echo '<p>' . $api_result['message'] . '</p>';
-            }
-        
+            ?>
+
+<?php        
 }
 else
 {

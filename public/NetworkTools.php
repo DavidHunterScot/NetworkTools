@@ -17,32 +17,73 @@ class NetworkTools
             return $return;
         }
         
-        if( ! in_array( $type, $this->validTypes ) )
+        if( ! in_array( $type, $this->validTypes ) && $type != "ALL" )
         {
             $return['type'] = 'error';
             $return['message'] = 'Unsuppored Record Type: ' . $type;
             return $return;
         }
 
-		shuffle( $nameservers );
-        
 		// Download latest Net_DNS2 from https://pear.php.net/package/Net_DNS2
 		// Place the "Net" dir next to this project.
-        $path_to_netdns2 = 'Net/DNS2.php';
-        
-        require_once $path_to_netdns2;
-    	
-    	if( ! class_exists( "\\Net_DNS2_Resolver" ) )
-    	{
-    	    $return['type'] = 'error';
-    	    $return['message'] = 'Resolver class not found.';
-    	    return $return;
-    	}
-    	
-    	$resolver = new \Net_DNS2_Resolver( array( "nameservers" => $nameservers ) );
+		$path_to_netdns2 = 'Net/DNS2.php';
+		
+		require_once $path_to_netdns2;
+		
+		if( ! class_exists( "\\Net_DNS2_Resolver" ) )
+		{
+			$return['type'] = 'error';
+			$return['message'] = 'Resolver class not found.';
+			return $return;
+		}
     	
     	try
     	{
+			$answers = array();
+
+			if( $type == "ALL" )
+			{
+				foreach( $this->validTypes as $validType )
+				{
+					shuffle( $nameservers );
+					
+					$resolver = new \Net_DNS2_Resolver( array( "nameservers" => $nameservers ) );
+					$response = $resolver->query( $hostname, $validType );
+
+					if( isset( $response->answer ) )
+					{
+						for( $a = 0; $a < count( $response->answer ); $a++ )
+						{
+							$response->answer[ $a ] = ( array ) $response->answer[ $a ];
+							if( isset( $response->answer[ $a ]['rdata'] ) ) unset( $response->answer[ $a ]['rdata'] );
+							if( isset( $response->answer[ $a ]['rdlength'] ) ) unset( $response->answer[ $a ]['rdlength'] );
+						}
+					}
+
+					$answers[ $validType ][ 'answer' ] = $response->answer;
+					$answers[ $validType ][ 'answer_from' ] = $response->answer_from;
+				}
+
+				$return['type'] = 'success';
+    			$return['answers'] = $answers;
+    			return $return;
+			}
+
+			// Download latest Net_DNS2 from https://pear.php.net/package/Net_DNS2
+			// Place the "Net" dir next to this project.
+			$path_to_netdns2 = 'Net/DNS2.php';
+			
+			require_once $path_to_netdns2;
+			
+			if( ! class_exists( "\\Net_DNS2_Resolver" ) )
+			{
+				$return['type'] = 'error';
+				$return['message'] = 'Resolver class not found.';
+				return $return;
+			}
+			
+			$resolver = new \Net_DNS2_Resolver( array( "nameservers" => $nameservers ) );
+			
     		$response = $resolver->query( $hostname, $type );
     		
     		if( isset( $response->answer ) )
@@ -55,8 +96,8 @@ class NetworkTools
     		    }
     		    
     			$return['type'] = 'success';
-    			$return['answer'] = $response->answer;
-				$return['answer_from'] = $response->answer_from;
+    			$return['answers'][ $type ]['answer'] = $response->answer;
+				$return['answers'][ $type ]['answer_from'] = $response->answer_from;
     			return $return;
     		}
     		
