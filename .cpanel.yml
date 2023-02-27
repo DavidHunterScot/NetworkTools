@@ -1,6 +1,0 @@
----
-deployment:
-  tasks:
-    - export DEPLOYPATH=~/sites/networktools/
-    - /bin/rm -R $DEPLOYPATH/public/*
-    - /bin/cp -R public $DEPLOYPATH
