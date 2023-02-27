@@ -62,8 +62,13 @@ elseif( $tool == "dns" )
                     
                     <p>
                         <label for="type">Type</label>
-                        <input type="text" id="type" name="type" class="w3-input"<?php if( $type ) echo ' value="' . $type . '"'; ?>>
-                        <span class="w3-text-gray w3-small">Supported Record Types (case sensitive): <?php echo join( ', ', $networkTools->getValidTypes() ); ?> (or ALL for all types)</span>
+                        <select class="w3-padding-small w3-select" name="type" id="type">
+                            <option value="ALL">ALL</option>
+                            <?php foreach( $networkTools->getValidTypes() as $validType ): ?>
+                                <option value="<?php echo $validType; ?>"<?php if( $validType == $type ) echo ' selected'; ?>><?php echo $validType; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <span class="w3-text-gray w3-small">The DNS record type you wish to query for. Selecting ALL will attempt to retrieve all supported types.</span>
                     </p>
                     
                     <p>
