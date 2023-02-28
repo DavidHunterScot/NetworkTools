@@ -7,7 +7,7 @@ DirectoryIndex web.php
     RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [END]
     
     RewriteRule ^api/?$ api.php?api
-    RewriteRule ^api/([a-zA-Z0-9]+)$ api.php?api&tool=$1 [QSA,END]
+    RewriteRule ^api/(.*)$ api.php?api&endpoint=$1 [QSA,END]
     RewriteRule ^([a-zA-Z0-9]+)$ web.php?tool=$1 [QSA,END]
     
     RewriteCond %{REQUEST_FILENAME} !-l
