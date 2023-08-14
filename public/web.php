@@ -35,6 +35,7 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . 'api.php';
             <div class="w3-auto">
                 <a class="w3-bar-item w3-button w3-bottombar w3-hover-none<?php if( $tool == '' ) echo ' w3-border-gray'; else echo ' w3-border-light-gray'; ?>" href="<?php echo strpos( $_SERVER['REQUEST_URI'], basename( __FILE__ ) ) ? '/' . basename( __FILE__ ) : '/'; ?>">Home</a>
                 <a class="w3-bar-item w3-button w3-bottombar w3-hover-none<?php if( $tool == 'dns' ) echo ' w3-border-gray'; else echo ' w3-border-light-gray'; ?>" href="<?php echo strpos( $_SERVER['REQUEST_URI'], basename( __FILE__ ) ) ? '/' . basename( __FILE__ ) . '?tool=dns' : '/dns'; ?>">DNS</a>
+                <a class="w3-bar-item w3-button w3-bottombar w3-hover-none<?php if( $tool == 'whois' ) echo ' w3-border-gray'; else echo ' w3-border-light-gray'; ?>" href="<?php echo strpos( $_SERVER['REQUEST_URI'], basename( __FILE__ ) ) ? '/' . basename( __FILE__ ) . '?tool=whois' : '/whois'; ?>">WHOIS</a>
             </div>
         </nav>
         
@@ -214,6 +215,67 @@ elseif( $tool == "dns" )
             ?>
 
 <?php        
+}
+elseif( $tool == "whois" )
+{
+?>
+
+    <h2><b>WHOIS</b> Tool</h2>
+
+    <form class="w3-padding-32">
+        <p>
+            <label for="hostname">Hostname</label>
+            <input type="text" id="hostname" name="hostname" class="w3-input"<?php if( $hostname ) echo ' value="' . $hostname . '"'; ?>>
+            <span class="w3-text-gray w3-small">example.tld</span>
+        </p>
+        
+        <?php if( strpos( $_SERVER['REQUEST_URI'], basename( __FILE__ ) ) ) echo '<input type="hidden" name="tool" value="' . $tool . '">'; ?>
+
+        <p>
+            <button type="submit" class="w3-button w3-border w3-border-gray w3-round-large">Submit</button>
+        </p>
+    </form>
+
+    <?php
+    
+    if( $api_result['type'] == "success" )
+    {
+        $result = $api_result['result'];
+        $result_lines = explode( "\n", $result );
+        $special_result_lines = array( "Domain Name", "Creation Date", "Updated Date", "Registry Expiry Date", "Registrar", "Name Server", "DNSSEC" );
+
+        $result_items = array();
+
+        foreach( $result_lines as $result_line )
+        {
+            $line_parts = explode( ": ", $result_line );
+
+            if( count( $line_parts ) == 2 )
+                $result_items[ $line_parts[ 0 ] ][] = $line_parts[ 1 ];
+        }
+
+        echo '<div class="w3-row-padding">';
+        foreach( $result_items as $result_item_key => $result_item_value )
+        {
+            if( in_array( $result_item_key, $special_result_lines ) )
+            {
+                echo '<div class="w3-half" style="overflow-x: auto;"><b>' . $result_item_key . ':</b>' . ( count( $result_item_value ) > 1 ? '<br>' : ' ' ) . join( "<br>", $result_item_value ) . '</div>';
+            }
+        }
+        echo '</div>';
+        ?>
+
+        <pre class="w3-light-gray w3-padding w3-round" style="overflow-x: auto;"><?php echo $result; ?></pre>
+    <?php
+    }
+    elseif( $hostname )
+    {
+        echo '<pre>' . print_r( $api_result, true ) . '</pre>';
+    }
+
+    ?>
+
+<?php
 }
 else
 {

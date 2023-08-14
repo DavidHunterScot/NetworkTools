@@ -50,6 +50,15 @@ elseif( $tool == "dns" )
     if( isset( $_GET['api'] ) )
         die( json_encode( $api_result ) );
 }
+elseif( $tool == "whois" )
+{
+    $hostname = isset( $endpoint_parts[ 0 ] ) ? $endpoint_parts[ 0 ] : "";
+
+    $api_result = $networkTools->whois( $hostname );
+
+    if( isset( $_GET['api'] ) )
+        die( json_encode( $api_result ) );
+}
 else
 {
     $api_result = array( 'type' => 'error', 'message' => 'Requested tool does not exist: ' . $tool );

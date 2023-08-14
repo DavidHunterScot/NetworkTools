@@ -128,4 +128,34 @@ class NetworkTools
 			return $ttl . ' (' . round( $ttl / 60 ) . " minute" . ( round( $ttl / 60 ) > 1 ? 's' : '' ) . ')';
 		return $ttl . " second" . ( $ttl > 1 ? 's' : '' );
 	}
+
+	public function whois( String $hostname )
+	{
+		if( ! $hostname )
+        {
+            $return['type'] = 'error';
+            $return['message'] = 'Hostname not provided.';
+            return $return;
+        }
+
+		$url = "https://tools.k.io/v1/whois/" . urlencode( $hostname );
+
+		$context = stream_context_create(['http' => ['ignore_errors' => true]]);
+
+		$result = file_get_contents( $url, false, $context );
+
+		if( ! empty( $result ) )
+		{
+			$return['type'] = 'success';
+			$return['result'] = $result;
+
+			return $return;
+		}
+
+		$return['type'] = 'error';
+		$return['message'] = 'No result returned.';
+		$return['http_response_code'] = $http_response_header;
+
+		return $return;
+	}
 }
