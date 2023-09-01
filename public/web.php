@@ -15,8 +15,8 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . 'api.php';
         
         <title>Network Tools by David Hunter</title>
         
-        <link rel="stylesheet" type="text/css" href="/assets/w3css/4.15/w3.css">
-        <link rel="stylesheet" type="text/css" href="/assets/webfonts/poppins/poppins.css">
+        <link rel="stylesheet" type="text/css" href="https://staticly.cc/w3css/4.15/w3.css">
+        <link rel="stylesheet" type="text/css" href="https://staticly.cc/webfonts/poppins/poppins.css">
 
         <style type="text/css">
             h1, h2, h3, h4, h5, h6, p, th { font-family: "Poppins", sans-serif; }
