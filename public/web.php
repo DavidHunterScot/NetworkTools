@@ -20,6 +20,70 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . 'api.php';
 
         <style type="text/css">
             h1, h2, h3, h4, h5, h6, p, th { font-family: "Poppins", sans-serif; }
+
+            :root
+            {
+                --color-dark-gray: #111;
+                --color-dark-gray-lighter: #333;
+                --color-light-gray: #fff;
+                --color-light-gray-darker: #eee;
+
+                --color-background: var( --color-light-gray );
+                --color-background-alt: var( --color-light-gray-darker );
+                --color-text: var( --color-dark-gray );
+                --color-text-alt: var( --color-dark-gray-lighter );
+            }
+
+            @media ( prefers-color-scheme: dark )
+            {
+                :root
+                {
+                    --color-background: var( --color-dark-gray );
+                    --color-background-alt: var( --color-dark-gray-lighter );
+                    --color-text: var( --color-light-gray );
+                    --color-text-alt: var( --color-light-gray-darker );
+                }
+            }
+
+            html,
+            body
+            {
+                background-color: var( --color-background );
+                color: var( --color-text );
+            }
+
+            input,
+            select
+            {
+                background-color: var( --color-background-alt );
+                color: var( --color-text );
+            }
+
+            .background-alt
+            {
+                background-color: var( --color-background-alt );
+            }
+
+            .w3-hover-none:hover
+            {
+                color: var( --color-text ) !important;
+            }
+
+            .w3-border-none
+            {
+                border-color: transparent !important;
+            }
+
+            .current
+            {
+                font-weight: bold;
+                border-color: var( --color-text-alt ) !important;
+            }
+
+            .w3-striped tr:nth-child( 2n )
+            {
+                background-color: var( --color-background-alt ) !important;
+            }
         </style>
     </head>
     
@@ -31,11 +95,11 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . 'api.php';
             </div>
         </header>
 
-        <nav class="w3-bar w3-light-gray">
+        <nav class="w3-bar background-alt">
             <div class="w3-auto">
-                <a class="w3-bar-item w3-button w3-bottombar w3-hover-none<?php if( $tool == '' ) echo ' w3-border-gray'; else echo ' w3-border-light-gray'; ?>" href="<?php echo strpos( $_SERVER['REQUEST_URI'], basename( __FILE__ ) ) ? '/' . basename( __FILE__ ) : '/'; ?>">Home</a>
-                <a class="w3-bar-item w3-button w3-bottombar w3-hover-none<?php if( $tool == 'dns' ) echo ' w3-border-gray'; else echo ' w3-border-light-gray'; ?>" href="<?php echo strpos( $_SERVER['REQUEST_URI'], basename( __FILE__ ) ) ? '/' . basename( __FILE__ ) . '?tool=dns' : '/dns'; ?>">DNS</a>
-                <a class="w3-bar-item w3-button w3-bottombar w3-hover-none<?php if( $tool == 'whois' ) echo ' w3-border-gray'; else echo ' w3-border-light-gray'; ?>" href="<?php echo strpos( $_SERVER['REQUEST_URI'], basename( __FILE__ ) ) ? '/' . basename( __FILE__ ) . '?tool=whois' : '/whois'; ?>">WHOIS</a>
+                <a class="w3-bar-item w3-button w3-bottombar w3-border-none w3-hover-none<?php if( $tool == '' ) echo ' current'; ?>" href="<?php echo strpos( $_SERVER['REQUEST_URI'], basename( __FILE__ ) ) ? '/' . basename( __FILE__ ) : '/'; ?>">Home</a>
+                <a class="w3-bar-item w3-button w3-bottombar w3-border-none w3-hover-none<?php if( $tool == 'dns' ) echo ' current'; ?>" href="<?php echo strpos( $_SERVER['REQUEST_URI'], basename( __FILE__ ) ) ? '/' . basename( __FILE__ ) . '?tool=dns' : '/dns'; ?>">DNS</a>
+                <a class="w3-bar-item w3-button w3-bottombar w3-border-none w3-hover-none<?php if( $tool == 'whois' ) echo ' current'; ?>" href="<?php echo strpos( $_SERVER['REQUEST_URI'], basename( __FILE__ ) ) ? '/' . basename( __FILE__ ) . '?tool=whois' : '/whois'; ?>">WHOIS</a>
             </div>
         </nav>
         
@@ -195,7 +259,7 @@ elseif( $tool == "dns" )
                 </div>
 
                 <div class="w3-panel w3-stretch">
-                    <p>Answer from nameserver <code class="w3-light-gray w3-padding-small w3-round-large"><?php echo $answer['answer_from']; ?></code>.</p>
+                    <p>Answer from nameserver <code class="background-alt w3-padding-small w3-round-large"><?php echo $answer['answer_from']; ?></code>.</p>
                 </div>
 
                 <?php
@@ -205,7 +269,7 @@ elseif( $tool == "dns" )
                     ?>
 
                 <div class="w3-panel w3-stretch">
-                    <p>Nameserver <code class="w3-light-gray w3-padding-small w3-round-large"><?php echo $answer['answer_from']; ?></code> has no <code class="w3-light-gray w3-padding-small w3-round-large"><?php echo $type; ?></code> records for hostname <code class="w3-light-gray w3-padding-small w3-round-large"><?php echo $hostname; ?></code>.</p>
+                    <p>Nameserver <code class="background-alt w3-padding-small w3-round-large"><?php echo $answer['answer_from']; ?></code> has no <code class="background-alt w3-padding-small w3-round-large"><?php echo $type; ?></code> records for hostname <code class="background-alt w3-padding-small w3-round-large"><?php echo $hostname; ?></code>.</p>
                 </div>
 
                 <?php
@@ -265,7 +329,7 @@ elseif( $tool == "whois" )
         echo '</div>';
         ?>
 
-        <pre class="w3-light-gray w3-padding w3-round" style="overflow-x: auto;"><?php echo $result; ?></pre>
+        <pre class="background-alt w3-padding w3-round" style="overflow-x: auto;"><?php echo $result; ?></pre>
     <?php
     }
     elseif( $hostname )
@@ -288,7 +352,7 @@ else
             </div>
         </main>
         
-        <footer class="w3-topbar w3-border-gray w3-light-gray">
+        <footer class="w3-topbar w3-border-gray background-alt">
             <div class="w3-auto w3-padding w3-small">
                 <p>Copyright &copy; <a href="https://davidhunter.scot" target="_blank">David Hunter</a>. Source Code on <a href="https://github.com/DavidHunterScot/NetworkTools" target="_blank">GitHub</a>.</p>
             </div>
