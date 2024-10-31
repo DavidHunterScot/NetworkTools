@@ -2,7 +2,7 @@
 
 include_once __DIR__ . DIRECTORY_SEPARATOR . 'NetworkTools.php';
 
-$endpoint = ( isset( $_REQUEST['tool'] ) ? $_REQUEST['tool'] : '' ) . '/' . ( isset( $_REQUEST['hostname'] ) ? $_REQUEST['hostname'] : '' ) . '/' . ( isset( $_REQUEST['type'] ) ? $_REQUEST['type'] : 'A' ) . '/' . ( isset( $_REQUEST['nameservers'] ) ? $_REQUEST['nameservers'] : join( ' ', NetworkTools::DEFAULT_NAMESERVERS ) );
+$endpoint = ( isset( $_REQUEST['tool'] ) ? $_REQUEST['tool'] : '' ) . '/' . ( isset( $_REQUEST['hostname'] ) ? $_REQUEST['hostname'] : '' ) . '/' . ( isset( $_REQUEST['type'] ) ? $_REQUEST['type'] : '' ) . '/' . ( isset( $_REQUEST['nameservers'] ) ? $_REQUEST['nameservers'] : join( ' ', NetworkTools::DEFAULT_NAMESERVERS ) );
 
 include_once __DIR__ . DIRECTORY_SEPARATOR . 'api.php';
 
@@ -13,7 +13,7 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . 'api.php';
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
-        <title>Network Tools by David Hunter</title>
+        <title>Network Tools</title>
         
         <link rel="stylesheet" type="text/css" href="/assets/w3css/4.15/w3.css">
         <link rel="stylesheet" type="text/css" href="/assets/webfonts/poppins/poppins.css">
@@ -91,7 +91,6 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . 'api.php';
         <header>
             <div class="w3-auto w3-padding">
                 <h1><b>Network Tools</b></h1>
-                <p>by David Hunter</p>
             </div>
         </header>
 
@@ -128,7 +127,7 @@ elseif( $tool == "dns" )
                     <p>
                         <label for="type">Type</label>
                         <select class="w3-padding-small w3-select" name="type" id="type">
-                            <option value="ALL">ALL</option>
+                            <option value="ALL"<?php if( $type == '' ) echo 'selected'; ?>>ALL</option>
                             <?php foreach( $networkTools->getValidTypes() as $validType ): ?>
                                 <option value="<?php echo $validType; ?>"<?php if( $validType == $type ) echo ' selected'; ?>><?php echo $validType; ?></option>
                             <?php endforeach; ?>
@@ -354,7 +353,7 @@ else
         
         <footer class="w3-topbar w3-border-gray background-alt">
             <div class="w3-auto w3-padding w3-small">
-                <p>Copyright &copy; <a href="https://david-hunter.net" target="_blank">David Hunter</a>. Source Code on <a href="https://github.com/DavidHunterScot/NetworkTools" target="_blank">GitHub</a>.</p>
+                <p>&nbsp;</p>
             </div>
         </footer>
     </body>

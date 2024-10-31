@@ -3,9 +3,8 @@ DirectoryIndex web.php
 <IfModule mod_rewrite.c>
     RewriteEngine on
     
-    RewriteCond %{SERVER_PORT} ^80$ [OR]
-    RewriteCond %{HTTP_HOST} !^networktools.webaddr.net$
-    RewriteRule ^(.*)$ https://networktools.webaddr.net/$1 [R=307,END]
+    RewriteCond %{SERVER_PORT} ^80$
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=307,END]
 
     
     RewriteRule ^api/?$ api.php?api

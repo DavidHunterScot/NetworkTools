@@ -32,7 +32,7 @@ if( isset( $_GET['api'] ) )
 if( $tool == "" )
 {
     $output[ 'type' ] = 'info';
-    $output[ 'message' ] = 'Welcome to Network Tools!';
+    $output[ 'message' ] = 'Welcome to Network Tools! A free service to help you with your networking needs.';
 
     $api_result = $output;
 
@@ -42,7 +42,7 @@ if( $tool == "" )
 elseif( $tool == "dns" )
 {
     $hostname = isset( $endpoint_parts[ 0 ] ) ? $endpoint_parts[ 0 ] : "";
-    $type = isset( $endpoint_parts[ 1 ] ) ? $endpoint_parts[ 1 ] : "A";
+    $type = isset( $endpoint_parts[ 1 ] ) ? $endpoint_parts[ 1 ] : "";
     $nameservers = isset( $endpoint_parts[ 2 ] ) ? explode( " ", $endpoint_parts[ 2 ] ) : NetworkTools::DEFAULT_NAMESERVERS;
 
     $api_result = $networkTools->dns( $hostname, $type, $nameservers );
