@@ -50,6 +50,16 @@ elseif( $tool == "dns" )
     if( isset( $_GET['api'] ) )
         die( json_encode( $api_result ) );
 }
+elseif( $tool == "rdns" )
+{
+    $ip_address = isset( $endpoint_parts[ 0 ] ) ? $endpoint_parts[ 0 ] : "";
+    $nameservers = isset( $endpoint_parts[ 1 ] ) ? explode( " ", $endpoint_parts[ 1 ] ) : NetworkTools::DEFAULT_NAMESERVERS;
+
+    $api_result = $networkTools->rdns( $ip_address, $nameservers );
+
+    if( isset( $_GET['api'] ) )
+        die( json_encode( $api_result ) );
+}
 elseif( $tool == "whois" )
 {
     $hostname = isset( $endpoint_parts[ 0 ] ) ? $endpoint_parts[ 0 ] : "";

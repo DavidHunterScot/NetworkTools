@@ -2,7 +2,30 @@
 
 include_once __DIR__ . DIRECTORY_SEPARATOR . 'NetworkTools.php';
 
-$endpoint = ( isset( $_REQUEST['tool'] ) ? $_REQUEST['tool'] : '' ) . '/' . ( isset( $_REQUEST['hostname'] ) ? $_REQUEST['hostname'] : '' ) . '/' . ( isset( $_REQUEST['type'] ) ? $_REQUEST['type'] : '' ) . '/' . ( isset( $_REQUEST['nameservers'] ) ? $_REQUEST['nameservers'] : join( ' ', NetworkTools::DEFAULT_NAMESERVERS ) );
+$nameservers = join( ' ', NetworkTools::DEFAULT_NAMESERVERS );
+
+if( isset( $_REQUEST[ 'nameservers' ] ) && $_REQUEST[ 'nameservers' ] )
+    $nameservers = $_REQUEST[ 'nameservers' ];
+
+$tool = '';
+$query = '';
+$type = '';
+
+if( isset( $_REQUEST['tool'] ) && $_REQUEST['tool'] )
+    $tool = $_REQUEST['tool'];
+if( isset( $_REQUEST['hostname'] ) && $_REQUEST['hostname'] )
+    $query = $_REQUEST['hostname'];
+if( isset( $_REQUEST['ip_address'] ) && $_REQUEST['ip_address'] )
+    $query = $_REQUEST['ip_address'];
+if( isset( $_REQUEST['type'] ) && $_REQUEST['type'] )
+    $type = $_REQUEST['type'];
+
+if( $tool == 'dns' )
+    $endpoint = 'dns/' . $query . '/' . $type . '/' . $nameservers;
+else if( $tool == 'rdns' )
+    $endpoint = 'rdns/' . $query . '/' . $nameservers;
+else if( $tool == 'whois' )
+    $endpoint = 'whois/' . $query . '/';
 
 include_once __DIR__ . DIRECTORY_SEPARATOR . 'api.php';
 
@@ -98,6 +121,7 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . 'api.php';
             <div class="w3-auto">
                 <a class="w3-bar-item w3-button w3-bottombar w3-border-none w3-hover-none<?php if( $tool == '' ) echo ' current'; ?>" href="<?php echo strpos( $_SERVER['REQUEST_URI'], basename( __FILE__ ) ) ? '/' . basename( __FILE__ ) : '/'; ?>">Home</a>
                 <a class="w3-bar-item w3-button w3-bottombar w3-border-none w3-hover-none<?php if( $tool == 'dns' ) echo ' current'; ?>" href="<?php echo strpos( $_SERVER['REQUEST_URI'], basename( __FILE__ ) ) ? '/' . basename( __FILE__ ) . '?tool=dns' : '/dns'; ?>">DNS</a>
+                <a class="w3-bar-item w3-button w3-bottombar w3-border-none w3-hover-none<?php if( $tool == 'rdns' ) echo ' current'; ?>" href="<?php echo strpos( $_SERVER['REQUEST_URI'], basename( __FILE__ ) ) ? '/' . basename( __FILE__ ) . '?tool=rdns' : '/rdns'; ?>">rDNS</a>
                 <a class="w3-bar-item w3-button w3-bottombar w3-border-none w3-hover-none<?php if( $tool == 'whois' ) echo ' current'; ?>" href="<?php echo strpos( $_SERVER['REQUEST_URI'], basename( __FILE__ ) ) ? '/' . basename( __FILE__ ) . '?tool=whois' : '/whois'; ?>">WHOIS</a>
             </div>
         </nav>
@@ -278,6 +302,91 @@ elseif( $tool == "dns" )
             ?>
 
 <?php        
+}
+elseif( $tool == "rdns" )
+{
+?>
+    <h2><b>rDNS</b> Tool</h2>
+
+    <form class="w3-padding-32">
+        <p>
+            <label for="ip_address">IP Address</label>
+            <input type="text" id="ip_address" name="ip_address" class="w3-input"<?php if( $ip_address ) echo ' value="' . $ip_address . '"'; ?>>
+            <span class="w3-text-gray w3-small">127.0.0.1</span>
+        </p>
+        
+        <p>
+            <label for="nameservers">Name Server IPs</label>
+            <input type="text" id="nameservers" name="nameservers" class="w3-input"<?php if( $nameservers ) echo ' value="' . join( ' ', $nameservers ) . '"'; ?>>
+            <span class="w3-text-gray w3-small">Space Separated List</span>
+        </p>
+        
+        <?php if( strpos( $_SERVER['REQUEST_URI'], basename( __FILE__ ) ) ) echo '<input type="hidden" name="tool" value="' . $tool . '">'; ?>
+
+        <p>
+            <button type="submit" class="w3-button w3-border w3-border-gray w3-round-large">Submit</button>
+        </p>
+    </form>
+
+    <?php
+    if( $api_result['type'] == "success" )
+    {
+        foreach( (array) $api_result['answers'] as $type => $answer )
+        {
+        ?>
+
+        <p class="w3-large w3-border-bottom w3-stretch w3-padding"><b><?php echo $type; ?></b></p>
+
+        <?php
+            if( count( ( array ) $answer['answer'] ) > 0 )
+            {
+    ?>
+
+        <div class="w3-stretch" style="overflow-x: auto; white-space: nowrap;">
+            <table class="w3-table w3-striped">
+                <tr>
+                    <th>IP Address</th>
+                    <th>Type</th>
+                    <th>Class</th>
+                    <th>TTL</th>
+                    <th>Hostname</th>
+                </tr>
+
+                <?php foreach( ( array ) $answer['answer'] as $record ): ?>
+
+                <tr class="w3-monospace">
+                    <td><?php echo $ip_address; ?></td>
+                    <td><?php echo $record['type']; ?></td>
+                    <td><?php echo $record['class']; ?></td>
+                    <td><?php echo $networkTools->friendlyTTL( $record['ttl'] ); ?></td>
+                    <td><?php echo $record['ptrdname']; ?></td>
+                </tr>
+
+                <?php endforeach; ?>
+
+            </table>
+        </div>
+
+        <div class="w3-panel w3-stretch">
+            <p>Answer from nameserver <code class="background-alt w3-padding-small w3-round-large"><?php echo $answer['answer_from']; ?></code>.</p>
+        </div>
+
+        <?php
+            }
+            else
+            {
+            ?>
+
+        <div class="w3-panel w3-stretch">
+            <p>Nameserver <code class="background-alt w3-padding-small w3-round-large"><?php echo $answer['answer_from']; ?></code> has no <code class="background-alt w3-padding-small w3-round-large">PTR</code> records for hostname <code class="background-alt w3-padding-small w3-round-large"><?php echo $hostname; ?></code>.</p>
+        </div>
+
+        <?php
+            }
+        }
+    }
+    ?>
+<?php
 }
 elseif( $tool == "whois" )
 {

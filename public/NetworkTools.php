@@ -112,6 +112,98 @@ class NetworkTools
     		return $return;
     	}
     }
+
+	public function rdns( String $ip_address, array $nameservers = NetworkTools::DEFAULT_NAMESERVERS )
+	{
+		if( ! $ip_address )
+        {
+            $return['type'] = 'error';
+            $return['message'] = 'IP Address not provided.';
+            return $return;
+        }
+
+		// Download latest Net_DNS2 from https://pear.php.net/package/Net_DNS2
+		// Place the "Net" dir next to this project.
+		$path_to_netdns2 = 'Net/DNS2.php';
+		
+		require_once $path_to_netdns2;
+		
+		if( ! class_exists( "\\Net_DNS2_Resolver" ) )
+		{
+			$return['type'] = 'error';
+			$return['message'] = 'Resolver class not found.';
+			return $return;
+		}
+
+		try
+    	{
+			$answers = array();
+
+			shuffle( $nameservers );
+				
+			$resolver = new \Net_DNS2_Resolver( array( "nameservers" => $nameservers ) );
+			$response = $resolver->query( $ip_address, "PTR" );
+
+			if( isset( $response->answer ) )
+			{
+				for( $a = 0; $a < count( $response->answer ); $a++ )
+				{
+					$response->answer[ $a ] = ( array ) $response->answer[ $a ];
+					if( isset( $response->answer[ $a ]['rdata'] ) ) unset( $response->answer[ $a ]['rdata'] );
+					if( isset( $response->answer[ $a ]['rdlength'] ) ) unset( $response->answer[ $a ]['rdlength'] );
+				}
+			}
+
+			$answers[ 'PTR' ][ 'answer' ] = $response->answer;
+			$answers[ 'PTR' ][ 'answer_from' ] = $response->answer_from;
+
+			$return['type'] = 'success';
+			$return['answers'] = $answers;
+			return $return;
+
+			// Download latest Net_DNS2 from https://pear.php.net/package/Net_DNS2
+			// Place the "Net" dir next to this project.
+			$path_to_netdns2 = 'Net/DNS2.php';
+			
+			require_once $path_to_netdns2;
+			
+			if( ! class_exists( "\\Net_DNS2_Resolver" ) )
+			{
+				$return['type'] = 'error';
+				$return['message'] = 'Resolver class not found.';
+				return $return;
+			}
+			
+			$resolver = new \Net_DNS2_Resolver( array( "nameservers" => $nameservers ) );
+			
+    		$response = $resolver->query( $hostname, $type );
+    		
+    		if( isset( $response->answer ) )
+    		{
+    		    for( $a = 0; $a < count( $response->answer ); $a++ )
+    		    {
+    		        $response->answer[ $a ] = ( array ) $response->answer[ $a ];
+					if( isset( $response->answer[ $a ]['rdata'] ) ) unset( $response->answer[ $a ]['rdata'] );
+					if( isset( $response->answer[ $a ]['rdlength'] ) ) unset( $response->answer[ $a ]['rdlength'] );
+    		    }
+    		    
+    			$return['type'] = 'success';
+    			$return['answers'][ 'PTR' ]['answer'] = $response->answer;
+				$return['answers'][ 'PTR' ]['answer_from'] = $response->answer_from;
+    			return $return;
+    		}
+    		
+    		$return['type'] = 'output';
+    		$return['response'] = $response;
+    		return $return;
+    	}
+    	catch( Net_DNS2_Exception $ndns2e )
+    	{
+    		$return['type'] = 'error';
+    		$return['message'] = $ndns2e->getMessage();
+    		return $return;
+    	}
+	}
     
     public function getValidTypes()
     {
