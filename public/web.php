@@ -299,6 +299,26 @@ elseif( $tool == "dns" )
                     }
                 }
             }
+            else if( $api_result[ 'type' ] == 'error' && isset( $api_result[ 'message' ] ) && isset( $_REQUEST[ 'hostname' ] ) )
+            {
+            ?>
+                <div class="w3-stretch" style="overflow-x: auto; white-space: nowrap;">
+                    <table class="w3-table w3-striped">
+                        <tr>
+                            <th>Type</th>
+                            <th>Message</th>
+                        </tr>
+
+                        <tr>
+                            <td>Error</td>
+                            <td><?php echo $api_result[ 'message' ]; ?></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <p>&nbsp;</p>
+            <?php
+            }
             ?>
 
 <?php        
