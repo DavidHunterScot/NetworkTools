@@ -29,6 +29,11 @@ else if( $tool == 'whois' )
 
 include_once __DIR__ . DIRECTORY_SEPARATOR . 'api.php';
 
+$home_url = strpos( $_SERVER['REQUEST_URI'], basename( __FILE__ ) ) ? '/' . basename( __FILE__ ) : '/';
+$dns_url = strpos( $_SERVER['REQUEST_URI'], basename( __FILE__ ) ) ? '/' . basename( __FILE__ ) . '?tool=dns' : '/dns';
+$rdns_url = strpos( $_SERVER['REQUEST_URI'], basename( __FILE__ ) ) ? '/' . basename( __FILE__ ) . '?tool=rdns' : '/rdns';
+$whois_url = strpos( $_SERVER['REQUEST_URI'], basename( __FILE__ ) ) ? '/' . basename( __FILE__ ) . '?tool=whois' : '/whois';
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -38,108 +43,128 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . 'api.php';
         
         <title>Network Tools</title>
         
-        <link rel="stylesheet" type="text/css" href="/assets/w3css/4.15/w3.css">
+        <!-- <link rel="stylesheet" type="text/css" href="/assets/w3css/4.15/w3.css"> -->
         <link rel="stylesheet" type="text/css" href="/assets/webfonts/poppins/poppins.css">
 
         <style type="text/css">
-            h1, h2, h3, h4, h5, h6, p, th { font-family: "Poppins", sans-serif; }
+            *, *::before, *::after { box-sizing: border-box; }
+            html, body { font-family: "Poppins", sans-serif; font-size: 1rem; margin: 0; padding: 0; background-color: #edf2f7; color: #000; line-height: 1.5; }
+            header, nav, footer, .tools .tool, form { background-color: #fff; color: #000; }
+            header h1 { font-size: 1.3rem; margin: 0; padding: 0; }
+            .container { max-width: 1200px; margin-left: auto; margin-right: auto; padding: 1rem; }
+            nav .container { display: flex; flex-direction: row; gap: 1rem; }
+            nav a { text-decoration: none; color: #000; font-weight: 600; }
+            nav a:hover, nav a.current { color: #4a68cf; }
+            main { margin-top: 3rem; margin-bottom: 3rem; }
+            .tools { display: flex; gap: 1.5rem; flex-wrap: wrap; flex-direction: column; justify-content: space-between; margin-top: 3rem; }
+            .tools .tool { display: flex; flex-direction: column; gap: 1rem; width: 100%; padding: 1.5rem; border-radius: 0.6rem; text-align: center; text-decoration: none; border: 1px solid #E2E8F0; }
+            .tools .tool:hover { border-color: #4a68cf; }
+            .tools .tool .icon img { max-width: 2.5rem; }
+            .tools .tool .title { font-size: 1.25rem; font-weight: bold; }
+            .tools .tool .description { font-size: 1rem; font-weight: normal; }
 
-            :root
+            form { padding: 1rem 2rem; border-radius: 1rem; }
+            label { color: #000; }
+            input[ type="text" ] { padding: 0.6rem; font-size: 1.3rem; display: block; border: none; border-bottom: 1px solid #ccc; width: 100%; }
+            select { padding: 0.6rem; font-size: 1.3rem; width: 100%; border: none; border-bottom-width: medium; border-bottom-style: none; border-bottom-color: currentcolor; border-bottom: 1px solid #ccc; }
+            button[ type="submit" ] { cursor: pointer; background-color: #38A169; padding: 0 24px; line-height: 2.5rem; font-size: 1rem; border-radius: 0.375rem; font-weight: 600; border-width: 0; color: #fff; }
+            button[ type="submit" ]:hover { background-color: #2F855A; }
+            form span { color: #888; font-size: 0.9rem; }
+
+            .results-container { margin-bottom: 3rem; }
+            .results-container code { background-color: #fff; padding: 0.6rem; border-radius: 0.6rem; }
+            table { width: 100%; border-width: 0; border-collapse: collapse; }
+            table tr { margin: 0; padding: 0; background-color: #f1f1f1; }
+            table tr:nth-child( 2n ) { background-color: #fff; }
+            table tr th, table tr td { padding: 1rem; margin: 0; text-align: left; }
+
+            pre { background-color: #fff; padding: 1rem; border-radius: 1rem; }
+
+            h2 { font-size: 2rem; }
+            h2 img { max-width: 3rem; vertical-align: middle; }
+
+            @media( prefers-color-scheme: dark )
             {
-                --color-dark-gray: #111;
-                --color-dark-gray-lighter: #333;
-                --color-light-gray: #fff;
-                --color-light-gray-darker: #eee;
+                html, body { background-color: #242c3a; color: #ffffffeb; }
+                header, nav, footer, .tools .tool, form { background-color: #242c3a; color: #ffffffeb; }
+                html, body { background-color: #1A202C; }
+                nav a { color: #fff; }
+                nav a:hover, nav a.current { color: #718ada; }
+                .tools .tool { border-color: #1A202C; }
+                .tools .tool:hover { border-color: #718ada; }
+                label { color: #fff; font-weight: 600; }
+                input, select { background-color: #2D3748; color: #ffffffeb; }
+                form span { color: #ccc; }
 
-                --color-background: var( --color-light-gray );
-                --color-background-alt: var( --color-light-gray-darker );
-                --color-text: var( --color-dark-gray );
-                --color-text-alt: var( --color-dark-gray-lighter );
+                .results-container code { background-color: #242c3a; }
+                table tr { background-color: #1A202C; }
+                table tr:nth-child( 2n ) { background-color: #242c3a; }
+
+                pre { background-color: #242c3a; }
             }
 
-            @media ( prefers-color-scheme: dark )
+            @media( min-width: 800px )
             {
-                :root
-                {
-                    --color-background: var( --color-dark-gray );
-                    --color-background-alt: var( --color-dark-gray-lighter );
-                    --color-text: var( --color-light-gray );
-                    --color-text-alt: var( --color-light-gray-darker );
-                }
-            }
-
-            html,
-            body
-            {
-                background-color: var( --color-background );
-                color: var( --color-text );
-            }
-
-            input,
-            select
-            {
-                background-color: var( --color-background-alt );
-                color: var( --color-text );
-            }
-
-            .background-alt
-            {
-                background-color: var( --color-background-alt );
-            }
-
-            .w3-hover-none:hover
-            {
-                color: var( --color-text ) !important;
-            }
-
-            .w3-border-none
-            {
-                border-color: transparent !important;
-            }
-
-            .current
-            {
-                font-weight: bold;
-                border-color: var( --color-text-alt ) !important;
-            }
-
-            .w3-striped tr:nth-child( 2n )
-            {
-                background-color: var( --color-background-alt ) !important;
+                .tools { flex-direction: row; }
+                .tools .tool { width: calc( 50% - 0.75rem ); }
             }
         </style>
     </head>
     
     <body>
         <header>
-            <div class="w3-auto w3-padding">
-                <h1><b>Network Tools</b></h1>
+            <div class="container">
+                <h1 class="w3-large"><b>Network Tools</b></h1>
             </div>
         </header>
 
-        <nav class="w3-bar background-alt">
-            <div class="w3-auto">
-                <a class="w3-bar-item w3-button w3-bottombar w3-border-none w3-hover-none<?php if( $tool == '' ) echo ' current'; ?>" href="<?php echo strpos( $_SERVER['REQUEST_URI'], basename( __FILE__ ) ) ? '/' . basename( __FILE__ ) : '/'; ?>">Home</a>
-                <a class="w3-bar-item w3-button w3-bottombar w3-border-none w3-hover-none<?php if( $tool == 'dns' ) echo ' current'; ?>" href="<?php echo strpos( $_SERVER['REQUEST_URI'], basename( __FILE__ ) ) ? '/' . basename( __FILE__ ) . '?tool=dns' : '/dns'; ?>">DNS</a>
-                <a class="w3-bar-item w3-button w3-bottombar w3-border-none w3-hover-none<?php if( $tool == 'rdns' ) echo ' current'; ?>" href="<?php echo strpos( $_SERVER['REQUEST_URI'], basename( __FILE__ ) ) ? '/' . basename( __FILE__ ) . '?tool=rdns' : '/rdns'; ?>">rDNS</a>
-                <a class="w3-bar-item w3-button w3-bottombar w3-border-none w3-hover-none<?php if( $tool == 'whois' ) echo ' current'; ?>" href="<?php echo strpos( $_SERVER['REQUEST_URI'], basename( __FILE__ ) ) ? '/' . basename( __FILE__ ) . '?tool=whois' : '/whois'; ?>">WHOIS</a>
+        <nav>
+            <div class="container">
+                <a class="w3-bar-item w3-button w3-bottombar w3-border-none w3-hover-none<?php if( $tool == '' ) echo ' current'; ?>" href="<?php echo $home_url; ?>">Home</a>
+                <a class="w3-bar-item w3-button w3-bottombar w3-border-none w3-hover-none<?php if( $tool == 'dns' ) echo ' current'; ?>" href="<?php echo $dns_url; ?>">DNS</a>
+                <a class="w3-bar-item w3-button w3-bottombar w3-border-none w3-hover-none<?php if( $tool == 'rdns' ) echo ' current'; ?>" href="<?php echo $rdns_url; ?>">rDNS</a>
+                <a class="w3-bar-item w3-button w3-bottombar w3-border-none w3-hover-none<?php if( $tool == 'whois' ) echo ' current'; ?>" href="<?php echo $whois_url; ?>">WHOIS</a>
             </div>
         </nav>
         
         <main>
-            <div class="w3-auto w3-padding">
+            <div class="container">
 
 <?php
 
 if( $tool == "" )
 {
-    echo '<p>' . $api_result['message'] . '</p>';
+?>
+
+                <p><?php echo $api_result['message']; ?></p>
+
+                <div class="tools">
+                    <a href="<?php echo $dns_url; ?>" class="tool">
+                        <div class="icon"><img src="/assets/images/icons/search.svg"></div>
+                        <div class="title">DNS</div>
+                        <div class="description">Lookup the DNS records for a given hostname.</div>
+                    </a>
+
+                    <a href="<?php echo $rdns_url; ?>" class="tool">
+                        <div class="icon"><img src="/assets/images/icons/info.svg"></div>
+                        <div class="title">rDNS</div>
+                        <div class="description">Lookup the hostname associated with an IP address.</div>
+                    </a>
+
+                    <a href="<?php echo $whois_url; ?>" class="tool">
+                        <div class="icon"><img src="/assets/images/icons/file.svg"></div>
+                        <div class="title">WHOIS</div>
+                        <div class="description">Lookup the public WHOIS record for a domain name.</div>
+                    </a>
+                </div>
+
+<?php
 }
 elseif( $tool == "dns" )
 {
 ?>
 
-                <h2><b>DNS</b> Tool</h2>
+                <h2><img src="/assets/images/icons/search.svg"> <b>DNS</b> Tool</h2>
 
                 <form class="w3-padding-32">
                     <p>
@@ -186,7 +211,7 @@ elseif( $tool == "dns" )
                     {
 ?>
 
-                <div class="w3-stretch" style="overflow-x: auto; white-space: nowrap;">
+                <div class="w3-stretch results-container" style="overflow-x: auto; white-space: nowrap;">
                     <table class="w3-table w3-striped">
                         <tr>
                             <th>Hostname</th>
@@ -281,7 +306,7 @@ elseif( $tool == "dns" )
                     </table>
                 </div>
 
-                <div class="w3-panel w3-stretch">
+                <div class="w3-panel w3-stretch results-container">
                     <p>Answer from nameserver <code class="background-alt w3-padding-small w3-round-large"><?php echo $answer['answer_from']; ?></code>.</p>
                 </div>
 
@@ -291,7 +316,7 @@ elseif( $tool == "dns" )
                     {
                     ?>
 
-                <div class="w3-panel w3-stretch">
+                <div class="w3-panel w3-stretch results-container">
                     <p>Nameserver <code class="background-alt w3-padding-small w3-round-large"><?php echo $answer['answer_from']; ?></code> has no <code class="background-alt w3-padding-small w3-round-large"><?php echo $type; ?></code> records for hostname <code class="background-alt w3-padding-small w3-round-large"><?php echo $hostname; ?></code>.</p>
                 </div>
 
@@ -326,7 +351,7 @@ elseif( $tool == "dns" )
 elseif( $tool == "rdns" )
 {
 ?>
-    <h2><b>rDNS</b> Tool</h2>
+    <h2><img src="/assets/images/icons/info.svg"> <b>rDNS</b> Tool</h2>
 
     <form class="w3-padding-32">
         <p>
@@ -412,7 +437,7 @@ elseif( $tool == "whois" )
 {
 ?>
 
-    <h2><b>WHOIS</b> Tool</h2>
+    <h2><img src="/assets/images/icons/file.svg"> <b>WHOIS</b> Tool</h2>
 
     <form class="w3-padding-32">
         <p>
@@ -481,7 +506,7 @@ else
         </main>
         
         <footer class="w3-topbar w3-border-gray background-alt">
-            <div class="w3-auto w3-padding w3-small">
+            <div class="container w3-small">
                 <p>&nbsp;</p>
             </div>
         </footer>
