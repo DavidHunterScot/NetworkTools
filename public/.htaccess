@@ -1,4 +1,8 @@
+Options -MultiViews
+
 DirectoryIndex web.php
+
+ErrorDocument 404 /web.php
 
 <IfModule mod_rewrite.c>
     RewriteEngine on
@@ -7,15 +11,13 @@ DirectoryIndex web.php
     RewriteCond %{HTTP:X-Forwarded-Proto} !https
     RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=307,END]
 
-    
-    RewriteRule ^api/?$ api.php?api
-    RewriteRule ^api/(.*)$ api.php?api&endpoint=$1 [QSA,END]
-    RewriteRule ^([a-zA-Z0-9]+)$ web.php?tool=$1 [QSA,END]
+    RewriteRule ^Net(?:/|$)(.*)$ - [R=404,END]
+    RewriteRule ^api(?:/|$)(.*)$ api.php?api&endpoint=$1 [QSA,END]
     
     RewriteCond %{REQUEST_FILENAME} !-l
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^(.*)$ web.php [QSA,END]
+    RewriteRule ^(.*)$ web.php?tool=$1 [QSA,END]
 	
 	Header add Access-Control-Allow-Origin "*"
 	Header add Access-Control-Allow-Methods: "GET,POST"

@@ -20,6 +20,9 @@ if( isset( $_REQUEST['ip_address'] ) && $_REQUEST['ip_address'] )
 if( isset( $_REQUEST['type'] ) && $_REQUEST['type'] )
     $type = $_REQUEST['type'];
 
+if( isset( $_SERVER[ 'REDIRECT_STATUS' ] ) && $_SERVER[ 'REDIRECT_STATUS' ] === "404" )
+    $tool = '404';
+
 if( $tool == 'dns' )
     $endpoint = 'dns/' . $query . '/' . $type . '/' . $nameservers;
 else if( $tool == 'rdns' )
@@ -497,8 +500,8 @@ elseif( $tool == "whois" )
 else
 {
         http_response_code( 404 );
-        
-        echo '<p>' . $api_result['message'] . '</p>';
+        echo '<h2>404 Not Found</h2>';
+        echo '<p>Sorry, nothing found here.</p>';
 }
 ?>
 
