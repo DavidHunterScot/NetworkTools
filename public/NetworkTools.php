@@ -250,4 +250,9 @@ class NetworkTools
 
 		return $return;
 	}
+
+	public static function generateCsrfToken()
+    {
+        return bin2hex( random_bytes( 35 ) );
+    }
 }
