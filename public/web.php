@@ -89,8 +89,8 @@ $_SESSION[ 'csrf_token' ] = NetworkTools::generateCsrfToken();
             form span { color: #888; font-size: 0.9rem; }
 
             .results-container { margin-bottom: 3rem; margin-left: -1rem; margin-right: -1rem; width: 100%; width: calc( 100% + 2rem ); }
-            .results-container > p { padding: 0.6rem; background-color: #F7FAFC; width: max-content; border-radius: 1rem; }
-            .results-container code { background-color: #F7FAFC; padding: 0.4rem; border-radius: 0.4rem; }
+            .results-container > p { padding: 0.4rem 0.6rem; background-color: #F7FAFC; width: auto; inline-size: max-content; max-inline-size: 100%; overflow-wrap: anywhere; word-break: break-word; line-height: 1.8; border-radius: 1rem; }
+            .results-container code { background-color: #F7FAFC; padding: 0.2rem 0.4rem; border-radius: 0.4rem; }
             table { width: 100%; border-width: 0; border-collapse: collapse; }
             table tr { margin: 0; padding: 0; background-color: transparent; }
             table tr:nth-child( 2n ) td { background-color: #fff; }
