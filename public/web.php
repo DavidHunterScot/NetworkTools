@@ -213,7 +213,7 @@ elseif( $tool == "dns" )
 
                 <h2><img src="/assets/images/icons/search.svg"> <b>DNS</b> Tool</h2>
 
-                <form class="w3-padding-32">
+                <form class="w3-padding-32" method="post">
                     <p>
                         <label for="hostname">Hostname</label>
                         <input type="text" id="hostname" name="hostname" class="w3-input"<?php if( $hostname ) echo ' value="' . $hostname . '"'; ?>>
@@ -401,7 +401,7 @@ elseif( $tool == "rdns" )
 ?>
     <h2><img src="/assets/images/icons/info.svg"> <b>rDNS</b> Tool</h2>
 
-    <form class="w3-padding-32">
+    <form class="w3-padding-32" method="post">
         <p>
             <label for="ip_address">IP Address</label>
             <input type="text" id="ip_address" name="ip_address" class="w3-input"<?php if( $ip_address ) echo ' value="' . $ip_address . '"'; ?>>
@@ -488,7 +488,7 @@ elseif( $tool == "whois" )
 
     <h2><img src="/assets/images/icons/file.svg"> <b>WHOIS</b> Tool</h2>
 
-    <form class="w3-padding-32">
+    <form class="w3-padding-32" method="post">
         <p>
             <label for="hostname">Hostname</label>
             <input type="text" id="hostname" name="hostname" class="w3-input"<?php if( $hostname ) echo ' value="' . $hostname . '"'; ?>>
