@@ -44,6 +44,9 @@ else if( $tool == 'whois' && $csrf_token_matched )
 
 include_once __DIR__ . DIRECTORY_SEPARATOR . 'api.php';
 
+if( isset( $api_result ) && isset( $api_result[ 'type' ] ) && $api_result[ 'type' ] == 'error' && isset( $api_result[ 'message' ] ) && $api_result[ 'message' ] && $_SERVER[ 'REQUEST_METHOD' ] == 'POST' )
+    $_SESSION[ 'error' ] = $api_result[ 'message' ];
+
 $home_url = strpos( $_SERVER['REQUEST_URI'], basename( __FILE__ ) ) ? '/' . basename( __FILE__ ) : '/';
 $dns_url = strpos( $_SERVER['REQUEST_URI'], basename( __FILE__ ) ) ? '/' . basename( __FILE__ ) . '?tool=dns' : '/dns';
 $rdns_url = strpos( $_SERVER['REQUEST_URI'], basename( __FILE__ ) ) ? '/' . basename( __FILE__ ) . '?tool=rdns' : '/rdns';
@@ -388,26 +391,6 @@ elseif( $tool == "dns" )
                 <?php
                     }
                 }
-            }
-            else if( $api_result[ 'type' ] == 'error' && isset( $api_result[ 'message' ] ) && isset( $_REQUEST[ 'hostname' ] ) && $csrf_token_matched )
-            {
-            ?>
-                <div class="w3-stretch" style="overflow-x: auto; white-space: nowrap;">
-                    <table class="w3-table w3-striped">
-                        <tr>
-                            <th>Type</th>
-                            <th>Message</th>
-                        </tr>
-
-                        <tr>
-                            <td>Error</td>
-                            <td><?php echo $api_result[ 'message' ]; ?></td>
-                        </tr>
-                    </table>
-                </div>
-
-                <p>&nbsp;</p>
-            <?php
             }
             ?>
 
