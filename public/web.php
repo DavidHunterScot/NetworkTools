@@ -49,6 +49,16 @@ $whois_url = strpos( $_SERVER['REQUEST_URI'], basename( __FILE__ ) ) ? '/' . bas
 
 $_SESSION[ 'csrf_token' ] = NetworkTools::generateCsrfToken();
 
+if( $tool == 'dns' )
+    $page_title_html = '<img src="/assets/images/icons/search.svg"> <b>DNS</b> Tool';
+else if( $tool == 'rdns' )
+    $page_title_html = '<img src="/assets/images/icons/info.svg"> <b>rDNS</b> Tool';
+else if( $tool == 'whois' )
+    $page_title_html = '<img src="/assets/images/icons/file.svg"> <b>WHOIS</b> Tool';
+
+if( isset( $page_title_html ) && trim( $page_title_html ) )
+    $page_title_text = strip_tags( $page_title_html );
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -56,7 +66,7 @@ $_SESSION[ 'csrf_token' ] = NetworkTools::generateCsrfToken();
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
-        <title>Network Tools</title>
+        <title><?php if( isset( $page_title_text ) && trim( $page_title_text ) ) echo trim( $page_title_text ) . ' - '; ?>Network Tools</title>
         
         <!-- <link rel="stylesheet" type="text/css" href="/assets/w3css/4.15/w3.css"> -->
         <link rel="stylesheet" type="text/css" href="/assets/webfonts/poppins/poppins.css">
@@ -68,8 +78,8 @@ $_SESSION[ 'csrf_token' ] = NetworkTools::generateCsrfToken();
             header h1 { font-size: 1.3rem; margin: 0; padding: 0; }
             .container { max-width: 1200px; margin-left: auto; margin-right: auto; padding: 1rem; }
             nav .container { display: flex; flex-direction: row; gap: 1rem; }
-            nav a { text-decoration: none; color: #000; font-weight: 600; }
-            nav a:hover, nav a.current { color: #4a68cf; }
+            nav a, footer a { text-decoration: none; color: #000; font-weight: 600; }
+            nav a:hover, nav a.current, footer a:hover { color: #4a68cf; }
             main { margin-top: 3rem; margin-bottom: 3rem; }
             .tools { display: flex; gap: 1.5rem; flex-wrap: wrap; flex-direction: column; justify-content: space-between; margin-top: 3rem; }
             .tools .tool { display: flex; flex-direction: column; gap: 1rem; width: 100%; padding: 1.5rem; border-radius: 0.6rem; text-align: center; text-decoration: none; border: 1px solid #E2E8F0; }
@@ -116,8 +126,8 @@ $_SESSION[ 'csrf_token' ] = NetworkTools::generateCsrfToken();
                 html, body { background-color: #242c3a; color: #ffffffeb; }
                 header, nav, footer, .tools .tool, form { background-color: #242c3a; color: #ffffffeb; }
                 html, body { background-color: #1A202C; }
-                nav a { color: #fff; }
-                nav a:hover, nav a.current { color: #718ada; }
+                nav a, footer a { color: #fff; }
+                nav a:hover, nav a.current, footer a:hover { color: #718ada; }
                 .tools .tool { border-color: #1A202C; }
                 .tools .tool:hover { border-color: #718ada; }
                 label { color: #fff; font-weight: 600; }
@@ -176,6 +186,7 @@ $_SESSION[ 'csrf_token' ] = NetworkTools::generateCsrfToken();
         
         <main>
             <div class="container">
+                <?php if( isset( $page_title_html ) && trim( $page_title_html ) ): ?><h2><?php echo trim( $page_title_html ); ?></h2><?php endif; ?>
 
 <?php
 
@@ -210,8 +221,6 @@ if( $tool == "" )
 elseif( $tool == "dns" )
 {
 ?>
-
-                <h2><img src="/assets/images/icons/search.svg"> <b>DNS</b> Tool</h2>
 
                 <form class="w3-padding-32" method="post">
                     <p>
@@ -399,8 +408,6 @@ elseif( $tool == "dns" )
 elseif( $tool == "rdns" )
 {
 ?>
-    <h2><img src="/assets/images/icons/info.svg"> <b>rDNS</b> Tool</h2>
-
     <form class="w3-padding-32" method="post">
         <p>
             <label for="ip_address">IP Address</label>
@@ -486,8 +493,6 @@ elseif( $tool == "whois" )
 {
 ?>
 
-    <h2><img src="/assets/images/icons/file.svg"> <b>WHOIS</b> Tool</h2>
-
     <form class="w3-padding-32" method="post">
         <p>
             <label for="hostname">Hostname</label>
@@ -557,7 +562,7 @@ else
         
         <footer class="w3-topbar w3-border-gray background-alt">
             <div class="container w3-small">
-                <p>&nbsp;</p>
+                <p>Bookmark this URL to Network Tools: <a href="https://weburl.net/networktools" target="_blank">weburl.net/networktools</a></p>
             </div>
         </footer>
     </body>
