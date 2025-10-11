@@ -30,8 +30,10 @@ if( isset( $_SERVER[ 'REDIRECT_STATUS' ] ) && $_SERVER[ 'REDIRECT_STATUS' ] === 
 
 $csrf_token_matched = false;
 
-if( $csrf_token && $csrf_token == $_SESSION['csrf_token']  )
+if( $csrf_token && isset( $_SESSION[ 'csrf_token' ] ) && $csrf_token == $_SESSION[ 'csrf_token' ] )
     $csrf_token_matched = true;
+if( $csrf_token && isset( $_SESSION[ 'csrf_token' ] ) && $csrf_token != $_SESSION[ 'csrf_token' ] )
+    $_SESSION[ 'error' ] = 'CSRF Token Missmatch! Please try again.';
 
 if( $tool == 'dns' && $csrf_token_matched )
     $endpoint = 'dns/' . $query . '/' . $type . '/' . $nameservers;
@@ -121,6 +123,9 @@ if( isset( $page_title_html ) && trim( $page_title_html ) )
             .dns-type.txt { background-color: #B2F5EA; color: #234E52; border-color: #234E52; }
             .dns-type.ptr { background-color: #c1cdf4; color: #0c1a40; border-color: #0c1a40; }
 
+            .alert { padding: 1rem; margin-left: -1rem; margin-right: -1rem; width: calc( 100% + 2rem ); }
+            .alert.error { background-color: #E53E3E; color: #FFFFFF; }
+
             @media( prefers-color-scheme: dark )
             {
                 html, body { background-color: #242c3a; color: #ffffffeb; }
@@ -159,11 +164,12 @@ if( isset( $page_title_html ) && trim( $page_title_html ) )
                 .results-summary > .results-summary-item { width: calc( 50% - 0.5rem ); }
                 .results-summary > .results-summary-item:nth-of-type( 2n ) { text-align: right; }
             }
-
+            
             @media( min-width: 1201px )
             {
                 form { border-radius: 1rem; }
                 .results-container { border-radius: 1rem; }
+                .alert { border-radius: 0.5rem; }
             }
         </style>
     </head>
@@ -187,6 +193,8 @@ if( isset( $page_title_html ) && trim( $page_title_html ) )
         <main>
             <div class="container">
                 <?php if( isset( $page_title_html ) && trim( $page_title_html ) ): ?><h2><?php echo trim( $page_title_html ); ?></h2><?php endif; ?>
+                
+                <?php if( isset( $_SESSION[ 'error' ] ) && $_SESSION[ 'error' ] ): ?><div class="alert error"><b>Error:</b> <?php echo $_SESSION[ 'error' ]; ?></div><?php unset( $_SESSION[ 'error' ] ); endif; ?>
 
 <?php
 
