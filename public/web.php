@@ -44,7 +44,7 @@ else if( $tool == 'whois' && $csrf_token_matched )
 
 include_once __DIR__ . DIRECTORY_SEPARATOR . 'api.php';
 
-if( isset( $api_result ) && isset( $api_result[ 'type' ] ) && $api_result[ 'type' ] == 'error' && isset( $api_result[ 'message' ] ) && $api_result[ 'message' ] && $_SERVER[ 'REQUEST_METHOD' ] == 'POST' )
+if( isset( $api_result ) && isset( $api_result[ 'type' ] ) && $api_result[ 'type' ] == 'error' && isset( $api_result[ 'message' ] ) && $api_result[ 'message' ] && $_SERVER[ 'REQUEST_METHOD' ] == 'POST' && ( ! isset( $_SESSION[ 'error' ] ) || ! $_SESSION[ 'error' ] ) )
     $_SESSION[ 'error' ] = $api_result[ 'message' ];
 
 $home_url = strpos( $_SERVER['REQUEST_URI'], basename( __FILE__ ) ) ? '/' . basename( __FILE__ ) : '/';
@@ -63,6 +63,15 @@ else if( $tool == 'whois' )
 
 if( isset( $page_title_html ) && trim( $page_title_html ) )
     $page_title_text = strip_tags( $page_title_html );
+
+if( ( ! isset( $hostname ) || ! $hostname ) && isset( $_REQUEST[ 'hostname' ] ) && $_REQUEST[ 'hostname' ] )
+    $hostname = $_REQUEST[ 'hostname' ];
+if( ( ! isset( $ip_address ) || ! $ip_address ) && isset( $_REQUEST[ 'ip_address' ] ) && $_REQUEST[ 'ip_address' ] )
+    $ip_address = $_REQUEST[ 'ip_address' ];
+if( ( ! isset( $type ) || ! $type ) && isset( $_REQUEST[ 'type' ] ) && $_REQUEST[ 'type' ] )
+    $type = $_REQUEST[ 'type' ];
+if( isset( $_REQUEST[ 'nameservers' ] ) && $_REQUEST[ 'nameservers' ] )
+    $nameservers = explode( ' ', $_REQUEST[ 'nameservers' ] );
 
 ?>
 <!DOCTYPE html>
@@ -530,10 +539,6 @@ elseif( $tool == "whois" )
 
         <pre class="background-alt w3-padding w3-round" style="overflow-x: auto;"><?php echo $result; ?></pre>
     <?php
-    }
-    elseif( $hostname )
-    {
-        echo '<pre>' . print_r( $api_result, true ) . '</pre>';
     }
 
     ?>
