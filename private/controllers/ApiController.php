@@ -31,7 +31,7 @@ class ApiController extends Controller
         if( isset( $params[ 1 ] ) && $params[ 1 ] )
             $type = $params[ 1 ];
         if( isset( $params[ 2 ] ) && $params[ 2 ] )
-            $nameservers = explode( $params[ 2 ] );
+            $nameservers = explode( ' ', str_replace( '+', ' ', $params[ 2 ] ) );
 
         $result = $networkTools->dns( $hostname, $type, $nameservers );
 
@@ -52,7 +52,7 @@ class ApiController extends Controller
         if( isset( $params[ 0 ] ) && $params[ 0 ] )
             $ip_address = $params[ 0 ];
         if( isset( $params[ 1 ] ) && $params[ 1 ] )
-            $nameservers = explode( $params[ 1 ] );
+            $nameservers = explode( ' ', str_replace( '+', ' ', $params[ 2 ] ) );
 
         $result = $networkTools->rdns( $ip_address, $nameservers );
 
