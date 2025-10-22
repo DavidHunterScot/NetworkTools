@@ -113,6 +113,6 @@ class DefaultController extends Controller
 
     public function _not_found_404()
     {
-        echo 'Not Found (404)';
+        $this->view( '404' );
     }
 }

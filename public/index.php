@@ -39,7 +39,7 @@ include_once '../private/controllers/' . $requested_controller . '.php';
 $default_controller_instance = new $default_controller;
 $requested_controller_instance = new $requested_controller;
 
-if( count( $requested_endpoint_parts ) >= 1 && $requested_endpoint_parts[ 0 ] && method_exists( $requested_controller_instance, $requested_endpoint_parts[ 0 ] ) )
+if( count( $requested_endpoint_parts ) >= 1 && $requested_endpoint_parts[ 0 ] && method_exists( $requested_controller_instance, $requested_endpoint_parts[ 0 ] ) && is_callable( [ $requested_controller_instance, $requested_endpoint_parts[ 0 ] ] ) )
 {
     $requested_method = $requested_endpoint_parts[ 0 ];
     unset( $requested_endpoint_parts[ 0 ] );

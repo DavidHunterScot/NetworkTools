@@ -23,10 +23,10 @@ if( isset( $page_title_html ) && trim( $page_title_html ) )
 
         <nav>
             <div class="container">
-                <a class="w3-bar-item w3-button w3-bottombar w3-border-none w3-hover-none<?php if( $params[ 'tool' ] == '' ) echo ' current'; ?>" href="/">Home</a>
-                <a class="w3-bar-item w3-button w3-bottombar w3-border-none w3-hover-none<?php if( $params[ 'tool' ] == 'dns' ) echo ' current'; ?>" href="/dns">DNS</a>
-                <a class="w3-bar-item w3-button w3-bottombar w3-border-none w3-hover-none<?php if( $params[ 'tool' ] == 'rdns' ) echo ' current'; ?>" href="/rdns">rDNS</a>
-                <a class="w3-bar-item w3-button w3-bottombar w3-border-none w3-hover-none<?php if( $params[ 'tool' ] == 'whois' ) echo ' current'; ?>" href="/whois">WHOIS</a>
+                <a class="w3-bar-item w3-button w3-bottombar w3-border-none w3-hover-none<?php if( isset( $params[ 'tool' ] ) && $params[ 'tool' ] == '' ) echo ' current'; ?>" href="/">Home</a>
+                <a class="w3-bar-item w3-button w3-bottombar w3-border-none w3-hover-none<?php if( isset( $params[ 'tool' ] ) && $params[ 'tool' ] == 'dns' ) echo ' current'; ?>" href="/dns">DNS</a>
+                <a class="w3-bar-item w3-button w3-bottombar w3-border-none w3-hover-none<?php if( isset( $params[ 'tool' ] ) && $params[ 'tool' ] == 'rdns' ) echo ' current'; ?>" href="/rdns">rDNS</a>
+                <a class="w3-bar-item w3-button w3-bottombar w3-border-none w3-hover-none<?php if( isset( $params[ 'tool' ] ) && $params[ 'tool' ] == 'whois' ) echo ' current'; ?>" href="/whois">WHOIS</a>
             </div>
         </nav>
         

@@ -83,7 +83,7 @@ class ApiController extends Controller
         $output = array();
 
         $output[ 'type' ] = 'error';
-        $output[ 'message' ] = 'Error 404: The requested API endpoint does not exist.';
+        $output[ 'message' ] = 'Error 404: The requested resource does not exist.';
         
         header( "Content-Type: text/plain" );
         echo json_encode( $output );
