@@ -45,12 +45,12 @@ if( count( $requested_endpoint_parts ) >= 1 && $requested_endpoint_parts[ 0 ] &&
     unset( $requested_endpoint_parts[ 0 ] );
     $requested_endpoint_parts = array_values( $requested_endpoint_parts );
 }
-else if( count( $requested_endpoint_parts ) >= 1 && $requested_endpoint_parts[ 0 ] && method_exists( $requested_controller_instance, '_not_found_404' ) )
+else if( count( $requested_endpoint_parts ) >= 1 && $requested_endpoint_parts[ 0 ] && method_exists( $requested_controller_instance, '_not_found_404' ) && is_callable( [ $requested_controller_instance, '_not_found_404' ] ) )
 {
     http_response_code( 404 );
     $requested_method = '_not_found_404';
 }
-else if( count( $requested_endpoint_parts ) >= 1 && $requested_endpoint_parts[ 0 ] && method_exists( $default_controller_instance, '_not_found_404' ) )
+else if( count( $requested_endpoint_parts ) >= 1 && $requested_endpoint_parts[ 0 ] && method_exists( $default_controller_instance, '_not_found_404' ) && is_callable( [ $default_controller_instance, '_not_found_404' ] ) )
 {
     http_response_code( 404 );
     $requested_controller_instance = $default_controller_instance;
