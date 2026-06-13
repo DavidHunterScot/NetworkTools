@@ -95,3 +95,16 @@ h2 img { max-width: 3rem; vertical-align: middle; }
     .results-container { border-radius: 1rem; }
     .alert { border-radius: 0.5rem; }
 }
+
+/* External Links */
+a[ target = "_blank" ]:after
+{
+    content: "";
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    margin-left: 0.3em;
+    background: currentColor;
+    mask: url( "/assets/images/ui/external-link.svg" ) no-repeat center;
+    mask-size: contain;
+}
